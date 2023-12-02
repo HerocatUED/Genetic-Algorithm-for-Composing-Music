@@ -1,5 +1,10 @@
 import mido
+import numpy as np
 from tqdm import tqdm
+
+import sys
+sys.path.append('..')
+from definitions import *
 
 
 def read_mid(path: str):
@@ -8,38 +13,27 @@ def read_mid(path: str):
         path: path to load midi file
     '''
     mid = mido.MidiFile(path)
-    for i, track in tqdm(enumerate(mid.tracks), desc=f'loading midi from {path}'):
-        print('Track {}: {}'.format(i, track.name))
-        for msg in track:
+    num = []
+    pitch = []
+    msgs = list(mid.tracks[1])
+    msgs = msgs[1:-1]
+    for msg in msgs:
+        if msg.type == 'note_on':
             print(msg)
+            n = msg.time // time
+            if n == 0:
+                continue
+            p = msg.note
+            num += [p] + [-1] * (n-1)
+            pitch += [num2pitch[p]] 
+            if n > 1:
+                pitch += [num2pitch[-1] * (n-1)]
+        # elif msg.type == 'note_off':
+        #     n = msg.time // 120
+        #     num += [0] * n
+        #     pitch += ['0'] * n
+    return num, pitch
 
-
-
-def num2pitch(yin):
-    return {
-        # 3
-        '48': 'C3',
-        '50': 'D3',
-        '52': 'E3',
-        '53': 'F3',
-        '55': 'G3',
-        '57': 'A3',
-        '59': 'B3',
-        # 4
-        '60': 'C4',
-        '62': 'D4',
-        '64': 'E4',
-        '65': 'F4',
-        '67': 'G4',
-        '69': 'A4',
-        '71': 'B4',
-        # 5
-        '72': 'C5',
-        '74': 'D5',
-        '76': 'E5',
-        '77': 'F5',
-        '79': 'G5',
-        '81': 'A5',
-        '83': 'B5',
-    }
-    
+num, pitch = read_mid('./问.mid')
+print(num)
+print(pitch)
