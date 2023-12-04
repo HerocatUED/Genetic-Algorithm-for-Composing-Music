@@ -13,27 +13,25 @@ def read_mid(path: str):
         path: path to load midi file
     '''
     mid = mido.MidiFile(path)
-    num = []
-    pitch = []
-    msgs = list(mid.tracks[1])
-    msgs = msgs[1:-1]
+    num = [] # e.g. [76, 74, 0, 74]
+    pitch = [] # e.g. ['E5', 'D5', '0', 'D5]
+    msgs = list(mid.tracks[1])[1:-1]
+    # convert
     for msg in msgs:
-        if msg.type == 'note_on':
-            print(msg)
-            n = msg.time // time
-            if n == 0:
-                continue
+        if msg.type == 'note_off':
+            n = msg.time // time_unit
+            if n == 0: continue
             p = msg.note
             num += [p] + [-1] * (n-1)
             pitch += [num2pitch[p]] 
-            if n > 1:
-                pitch += [num2pitch[-1] * (n-1)]
-        # elif msg.type == 'note_off':
-        #     n = msg.time // 120
-        #     num += [0] * n
-        #     pitch += ['0'] * n
-    return num, pitch
+            if n > 1: pitch += [num2pitch[-1] * (n-1)]
+        elif msg.type == 'note_on':
+            n = msg.time // time_unit
+            num += [0] * n
+            pitch += ['0'] * n
+    # pad the music to 18*8
+    num = np.array(num,dtype=int)
+    current_length = np.shape(num)[0]
+    music = np.pad(num, (0,padded_length-current_length), 'constant', constant_values=0)
+    return music
 
-num, pitch = read_mid('./问.mid')
-print(num)
-print(pitch)

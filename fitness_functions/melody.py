@@ -5,13 +5,12 @@ sys.path.append('..')
 from definitions import *
 
 
-def repeatness(music:np.array, threshold:float = 0.5):
+def repeatness(music:np.array, threshold:float):
     '''
     Args:
     music: 2D array
     threshold: maximum rate for repeatness
     '''
-    assert len(np.shape(music)) == 2
     # calculate repeatness
     music_num = np.shape(music)[0]
     max_rate = np.zeros(music_num)
@@ -23,13 +22,12 @@ def repeatness(music:np.array, threshold:float = 0.5):
     score[max_rate>threshold] *= (1 - max_rate[max_rate>threshold]) 
     return score
 
-def fluctuation(music:np.array, threshold:float = 3):
+def fluctuation(music:np.array, threshold:float):
     '''
     Args:
     music: 2D array
     threshold: maximum average fluctuation
     '''
-    assert len(np.shape(music)) == 2
     # padding
     music_num = np.shape(music)[0]
     music_1 = np.pad(music, ((0,0),(1,0)), 'constant', constant_values=0)
@@ -43,4 +41,22 @@ def fluctuation(music:np.array, threshold:float = 3):
     score[avg_fluctuation>threshold] -= avg_fluctuation[avg_fluctuation>threshold] * 5
     score[max_fluctuation>12] -= max_fluctuation[max_fluctuation>12] * 5
     return score
+
+
+def melody_score(
+    music:np.array, 
+    threshold_r:float = 0.4, threshold_f:float = 3, 
+    weight_r:float = 1, weight_f:float = 1):
+    '''
+    Args:
+    music: 2D array
+    threshold_r: maximum rate for repeatness
+    threshold_f: maximum average fluctuation
+    weight_r: weigh of repeatness score
+    weight_f: weight of fluction score
+    '''
+    assert len(np.shape(music)) == 2
+
+    return repeatness(music, threshold_r)*weight_r + fluctuation(music, threshold_f)*weight_f
+    
     

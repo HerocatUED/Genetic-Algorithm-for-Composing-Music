@@ -44,6 +44,10 @@ num2pitch = {
     95: 'B6',
 }
 
-time = 240 # 八分音符在midi中对应的时间
+# 八分音符在midi中对应的时长
+time_unit = 240 
 
-music_length = int(16*8*4) # 16小节的音乐片段，数组表示的长度
+# 音乐片段数组表示的长度：16小节每小节8个八分音符
+music_length = int(16*8) 
+# 算上前后两个空小节
+padded_length = int(18*8)
