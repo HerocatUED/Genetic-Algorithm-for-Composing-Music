@@ -4,8 +4,57 @@ import sys
 sys.path.append('..')
 from definitions import *
 
+def in5(a:int,b:int): # 在五和弦里
+    if a == b or a == (b+3)%12 or a == (b+4)%12 or a == (b+6)%12 or a==(b+7)%12 or a == (b+8)%12 :
+        return True
+    return False
 
-def chord_score(music:np.array,rate7:float= 0.3,not_in_chord:float = 0.8,chord_B = 0.9,rate7_penalty:float = 0.1):
+def in7(a:int,b:int): # 在七和弦里
+    if(in5(a,b)):
+        return True
+    if a == (b+11)%12 or a == (b+10)%12 :
+        return True
+    return False
+
+def calc(len:int,a:np.array,rate7:float,chord_B:float,rate7_penalty:float):
+    '''
+    chords:和弦库
+    chords_type:和弦属性
+    '''
+    ans = 0.0
+    (n,) = np.shape(chords)
+    for i in range(len):
+        a[i] %= 12
+    for i in range(n):
+        m = np.shape(chords)
+        mnnum7 = 0.0
+        mxnum7 = 0.0
+        neq = False
+        if len != m:
+            continue
+        for j in range(m):
+            if in7(a[j],chords[i][j]):
+                mxnum7 += 1
+                if in5(a[j],chords[i][j]) == False:
+                    mnnum7 += 1
+            else:
+                neq = True
+                break
+        if neq == True:
+            continue
+        mxnum7 /= len
+        mnnum7 /= len
+        nwans = 1.0
+        if(chords_type[i] == 1): # A : 0 , B : 1
+            nwans = chord_B
+        if(mxnum7 < rate7):
+            ans = ans * (1-(rate7-mxnum7)*rate7_penalty)
+        if(mnnum7 > rate7):
+            ans = ans * (1-(mnnum7 - rate7)*rate7_penalty)
+        ans = max(ans,nwans)
+    return ans
+
+def chord_score(music:np.array,not_in_chord:float = 0.8,rate7:float = 0.3,chord_B:float = 0.9,rate7_penalty:float = 0.1):
     '''
     Args:
     music: 2D array
@@ -39,7 +88,7 @@ def chord_score(music:np.array,rate7:float= 0.3,not_in_chord:float = 0.8,chord_B
         for j in range(mm):
             f[j+1]=f[j]*not_in_chord
             for k in range(j):
-                f[j+1]=max(f[j+1],f[k]*calc(k,j,nw[i][k:j]))
+                f[j+1]=max(f[j+1],f[k]*calc(j-k+1,nw[i][k:j],rate7,chord_B,rate7_penalty))
         score[i]=f[mm]
 
     return score
