@@ -4,15 +4,17 @@ import sys
 sys.path.append('..')
 from definitions import *
 
+chord_trans = [1,1,2,2,3,4,4,5,5,6,6,0] #将12音级暂时转化为0~6，其中1为do,...,6为la,0为si
+
 def in5(a:int,b:int): # 在五和弦里
-    if a == b or a == (b+3)%12 or a == (b+4)%12 or a == (b+6)%12 or a==(b+7)%12 or a == (b+8)%12 :
+    if a == b or a == (b+2)%7 or a == (b+4)%7:
         return True
     return False
 
 def in7(a:int,b:int): # 在七和弦里
     if(in5(a,b)):
         return True
-    if a == (b+11)%12 or a == (b+10)%12 :
+    if a == (b+6)%7:
         return True
     return False
 
@@ -71,15 +73,15 @@ def chord_score(music:np.array,not_in_chord:float = 0.8,rate7:float = 0.3,chord_
     for i in range(n):
         for j in range(0,m,8):
             if music[i][j]!=0 :
-                nw[i][j/8]=music[i][j]
+                nw[i][j/8]=chord_trans[music[i][j]%12]
                 continue
             if j!=0:
                 if music[i][j-1]!=0:
-                    nw[i][j/8]=music[i][j-1]
+                    nw[i][j/8]=chord_trans[music[i][j-1]%12]
                     continue
             for k in range(1,8):
                 if music[i][j+k]!=0:
-                    nw[i][j/8]=music[i][j+k]
+                    nw[i][j/8]=chord_trans[music[i][j+k]%12]
                     break
 
     for i in range(n):
