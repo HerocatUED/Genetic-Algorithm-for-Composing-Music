@@ -56,7 +56,7 @@ def calc(len:int,a:np.array,rate7:float,chord_B:float,rate7_penalty:float):
         ans = max(ans,nwans)
     return ans
 
-def chord_score(music:np.array,not_in_chord:float = 0.8,rate7:float = 0.3,chord_B:float = 0.9,rate7_penalty:float = 0.1):
+def chord_score(music:np.array,not_in_chord:float = 0.8,rate7:float = 0.25,chord_B:float = 0.9,rate7_penalty:float = 0.1):
     '''
     Args:
     music: 2D array
