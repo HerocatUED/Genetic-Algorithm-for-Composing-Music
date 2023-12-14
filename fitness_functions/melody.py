@@ -41,14 +41,14 @@ def fluctuation(music:np.array, threshold:float):
     # score with fluctuation
     score = np.ones( np.shape(music)[0]) * 100
     score[avg_fluctuation>threshold] -= avg_fluctuation[avg_fluctuation>threshold] * 5
-    score[max_fluctuation>12] -= max_fluctuation[max_fluctuation>12] * 5
+    score[max_fluctuation>12] -= max_fluctuation[max_fluctuation>12] * 2
     return np.clip(score, a_min=0, a_max=100)
 
 
 def melody_score(
     music:np.array, 
     threshold_r:float = 0.4, threshold_f:float = 3, 
-    weight_r:float = 1, weight_f:float = 1):
+    weight_r:float = 0.4, weight_f:float = 0.6):
     '''
     Args:
     music: 2D array

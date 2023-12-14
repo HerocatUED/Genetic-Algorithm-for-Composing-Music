@@ -66,7 +66,7 @@ def melody_hold(music:np.array):
 
 def rhythm_score(music:np.array, 
                  threshold_f:int = 12, 
-                 weight_r:float = 1, weight_f:float = 1, weight_m:float = 1):
+                 weight_r:float = 0.3, weight_f:float = 0.3, weight_m:float = 0.4):
     '''
     Args:
     music: 2D array
