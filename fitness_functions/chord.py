@@ -7,7 +7,6 @@ from definitions import *
 
 chord_trans = [1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 0]  # 将12音级暂时转化为0~6，其中1为do,...,6为la,0为si
 
-
 def in5(a, b):  # 在五和弦里
     if a == b or a == (b + 2) % 7 or a == (b + 4) % 7:
         return True
@@ -23,7 +22,7 @@ def in7(a, b):  # 在七和弦里
 
 
 def calc(
-    length: int, a: np.ndarray, rate7: float, chord_B: float, rate7_penalty: float
+    length: int, a: np.ndarray, rate7: float, chord_B: float, rate7_penalty: float, b: np.ndarray
 ):
     """
     chords:和弦库
@@ -31,6 +30,7 @@ def calc(
     """
     ans = 0.0
     a = a % 12
+    id = 0
     for chord, chord_type in zip(chords, chords_type):
         # Fixed by hzj
         m = len(chord)
@@ -45,8 +45,9 @@ def calc(
                 if in5(a[j], chord[j]) == False:
                     mnnum7 += 1
             else:
-                neq = True
-                break
+                if b[j]==0 or j != m-1:
+                    neq = True
+                    break
         if neq == True:
             continue
         mxnum7 /= length
@@ -58,8 +59,10 @@ def calc(
             ans = ans * (1 - (rate7 - mxnum7) * rate7_penalty)
         if mnnum7 > rate7:
             ans = ans * (1 - (mnnum7 - rate7) * rate7_penalty)
-        ans = max(ans, nwans)
-    return ans
+        if(nwans > ans):
+            ans = nwans
+            id = chord
+    return (ans,id)
 
 
 def chord_score(
@@ -68,6 +71,7 @@ def chord_score(
     rate7: float = 0.25,
     chord_B: float = 0.9,
     rate7_penalty: float = 0.1,
+    debug_mode: int = 0
 ):
     """
     Args:
@@ -81,14 +85,17 @@ def chord_score(
     (n, m) = np.shape(music)
     mm = m // 8
     nw = np.zeros((n, mm))
+    tags = np.zeros((n,mm))
     score = np.zeros(n)
-
     # Fixed by hzj 
     for i in range(n):
         for j in range(0, m, 8):
             if music[i][j] != 0:
                 nw[i][j // 8] = chord_trans[music[i][j] % 12]
                 continue
+            if music[i][j] == 0 and music[i][j+1] == 0 and \
+            music[i][j+2] == 0 and music[i][j+3] == 0 and music[i][j+7]==0:
+                tags[i][j//8]=1
             if j != 0:
                 if music[i][j - 1] != 0:
                     nw[i][j // 8] = chord_trans[music[i][j - 1] % 12]
@@ -99,16 +106,27 @@ def chord_score(
                     break
         
         f = np.zeros(mm + 1)
+        lst1 = np.zeros(mm + 1)
+        lst2 = np.zeros(mm + 1)
         f[0] = 100
         for j in range(mm):
             f[j + 1] = f[j] * not_in_chord
-
-            for k in range(j):
-                f[j + 1] = max(
-                    f[j + 1],
-                    f[k]
-                    * calc(j - k + 1, nw[i][k : j + 1], rate7, chord_B, rate7_penalty),
-                )
+            lst2[j+1] = j
+            if(j==3 or j==7 or j==11 or j==15):
+                for k in range(j):
+                    if j == 11 and k == 4:
+                        continue
+                    (val,id) = f[k] * calc(j - k + 1, nw[i][k : j + 1], rate7, chord_B, rate7_penalty,tags[i][k:j+1])
+                    if(val > f[j+1]):
+                        f[j + 1] = val
+                        lst1[j+1] = id
+                        lst2[j+1] = k
+        if debug_mode == 1:
+            print('Period %d: \n' %(i))
+            nw = mm
+            while nw != 0:
+                print(lst1[j+1])
+                nw = lst2[nw]
         score[i] = f[mm]
 
     return score
