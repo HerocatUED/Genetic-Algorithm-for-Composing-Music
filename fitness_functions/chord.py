@@ -31,8 +31,10 @@ def calc(
     ans = 0.0
     a = a % 12
     id = 0
+    cnt = -1
     for chord, chord_type in zip(chords, chords_type):
         # Fixed by hzj
+        cnt = cnt + 1
         m = len(chord)
         mnnum7 = 0.0
         mxnum7 = 0.0
@@ -61,7 +63,7 @@ def calc(
             ans = ans * (1 - (mnnum7 - rate7) * rate7_penalty)
         if(nwans > ans):
             ans = nwans
-            id = chord
+            id = cnt
     return (ans,id)
 
 
@@ -71,7 +73,7 @@ def chord_score(
     rate7: float = 0.25,
     chord_B: float = 0.9,
     rate7_penalty: float = 0.1,
-    debug_mode: int = 0
+    debug_mode: int = 1
 ):
     """
     Args:
@@ -106,8 +108,8 @@ def chord_score(
                     break
         
         f = np.zeros(mm + 1)
-        lst1 = np.zeros(mm + 1)
-        lst2 = np.zeros(mm + 1)
+        lst1 = np.zeros(mm + 1,dtype=int)
+        lst2 = np.zeros(mm + 1,dtype=int)
         f[0] = 100
         for j in range(mm):
             f[j + 1] = f[j] * not_in_chord
@@ -116,17 +118,17 @@ def chord_score(
                 for k in range(j):
                     if j == 11 and k == 4:
                         continue
-                    (val,id) = f[k] * calc(j - k + 1, nw[i][k : j + 1], rate7, chord_B, rate7_penalty,tags[i][k:j+1])
-                    if(val > f[j+1]):
-                        f[j + 1] = val
+                    (val,id) =  calc(j - k + 1, nw[i][k : j + 1], rate7, chord_B, rate7_penalty,tags[i][k:j+1])
+                    if(f[k] * val > f[j+1]):
+                        f[j + 1] = f[k] * val
                         lst1[j+1] = id
                         lst2[j+1] = k
         if debug_mode == 1:
-            print('Period %d: \n' %(i))
-            nw = mm
-            while nw != 0:
-                print(lst1[j+1])
-                nw = lst2[nw]
+            print('*Period %d:' %(i))
+            nww = mm
+            while nww != 0:
+                print('%d to %d' %(lst2[nww],nww),chords[lst1[nww]])
+                nww = lst2[nww]
         score[i] = f[mm]
 
     return score
