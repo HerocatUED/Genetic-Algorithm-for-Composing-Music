@@ -47,7 +47,7 @@ def fluctuation(music:np.array, threshold:float):
 
 def melody_score(
     music:np.array, 
-    threshold_r:float = 0.4, threshold_f:float = 3, 
+    threshold_r:float = 0.5, threshold_f:float = 5, 
     weight_r:float = 0.4, weight_f:float = 0.6):
     '''
     Args:
@@ -59,8 +59,9 @@ def melody_score(
     '''
     assert len(np.shape(music)) == 2
 
-    music_1 = replace_delay(music)
+    music_1 = replace_delay(music, -1)
+    music_2 = replace_delay(music_1, 0)
     
-    return repeatness(music_1, threshold_r)*weight_r + fluctuation(music, threshold_f)*weight_f
+    return repeatness(music_1, threshold_r)*weight_r + fluctuation(music_2, threshold_f)*weight_f
     
     
