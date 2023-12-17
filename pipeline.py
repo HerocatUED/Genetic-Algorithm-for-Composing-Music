@@ -16,8 +16,11 @@ def main(data_dir: Path, save_path: Path):
     # read midis
     print("Reading midi files...")
     midi_paths = list(data_dir.glob("*.mid"))
+
     musics = np.stack([read_mid(path) for path in midi_paths], axis=0)
+
     print(musics.shape)
+    
     # calculate fitness
     print("Calculating fitness...")
     fitness = fitness_function(musics)
