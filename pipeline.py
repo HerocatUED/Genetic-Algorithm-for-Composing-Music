@@ -39,7 +39,7 @@ def main(data_dir: Path, save_path: Path):
 
 if __name__ == "__main__":
     # 存放midi文件的路径
-    data_dir = Path("../mididata")
+    data_dir = Path("./data/mididata")
     save_path = Path("./result")
     save_path.mkdir(parents=True, exist_ok=True)
 
