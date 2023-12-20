@@ -11,9 +11,8 @@ def replace_delay(music:np.array, pitch:int=-1):
     pitch to be replaced, defalut to -1
     '''
     assert len(np.shape(music)) == 2
-    mask = music == pitch
-    pos = np.where(mask, np.roll(music, 1, axis=1), 0)
-    values_to_replace = np.maximum.accumulate(pos, axis=1)
-    result = np.where(mask, values_to_replace, music)
+    result = music.copy()
+    while(np.shape(result[result==pitch])[0] > 0):
+        mask = result == pitch
+        result = np.where(mask, np.roll(result, 1, axis=1), result)
     return result
-

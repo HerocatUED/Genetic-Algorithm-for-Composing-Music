@@ -8,7 +8,6 @@ from utils import replace_delay
 
 def repeatness(music:np.array, threshold:float):
     '''
-    # TODO
     Args:
     music: 2D array
     threshold: maximum repeatness
@@ -56,7 +55,7 @@ def fluctuation(music:np.array, nonzero_cnt: int, threshold:float, threshold_2:f
 def melody_score(
     music:np.array, 
     threshold_r:float = 0.5, threshold_f:float = 3, threshold_m:float = 6,
-    weight_r:float = 0.2, weight_f:float = 0.8):
+    weight_r:float = 0.3, weight_f:float = 0.7):
     '''
     Args:
     music: 2D array
@@ -73,6 +72,6 @@ def melody_score(
     nonzero_cnt = np.count_nonzero(music_1, axis=1)
 
     score = repeatness(music_1, threshold_r)*weight_r + fluctuation(music_2, nonzero_cnt, threshold_f, threshold_m)*weight_f
-    return 2*score
+    return score
     
     
