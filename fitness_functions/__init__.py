@@ -12,4 +12,4 @@ def fitness_function(music: np.array):
     """
     assert len(np.shape(music)) == 2
 
-    return melody_score(music) + chord_score(music)*0.5 + rhythm_score(music)
+    return melody_score(music) + chord_score(music, debug_mode=0)*0.5 + rhythm_score(music)
