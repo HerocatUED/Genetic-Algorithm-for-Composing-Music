@@ -10,9 +10,11 @@ from fitness_functions.melody import melody_score
 from fitness_functions.rhythm import rhythm_score
 from data.midi import read_mid
 from pathlib import Path
+from torch.utils.tensorboard.writer import SummaryWriter
+from tqdm import tqdm
 
 
-def main(data_dir: Path, save_path: Path):
+def main(data_dir: Path, save_path: Path,max_iters:int):
     # read midis
     print("Reading midi files...")
     midi_paths = list(data_dir.glob("*.mid"))
@@ -20,6 +22,14 @@ def main(data_dir: Path, save_path: Path):
     musics = np.stack([read_mid(path) for path in midi_paths], axis=0)
 
     print(musics.shape)
+    
+    
+    mididx = 14
+    music = musics[mididx].copy()
+    idx = music ==0
+    music = music % 12 + 1
+    music[idx] = 0
+    print(music)    
     
     # calculate fitness
     print("Calculating fitness...")
@@ -33,7 +43,12 @@ def main(data_dir: Path, save_path: Path):
         print(
             f"{path.name:\u3000<11} [fit: {fit:7.3f}], [chord: {chord_loss:7.3f}], [melody: {melody_loss:7.3f}], [rhythm: {rhythm_loss:7.3f}]"
         )
-    return
+
+    # iter loops
+    
+    for iter in tqdm(range(max_iters)):
+        
+    #writer = SummaryWriter(log_dir=os.path.join('experiments', args.exp_name, 'logs'))
     # calculate fitness
 
 
@@ -43,4 +58,4 @@ if __name__ == "__main__":
     save_path = Path("./result")
     save_path.mkdir(parents=True, exist_ok=True)
 
-    main(data_dir=data_dir, save_path=save_path)
+    main(data_dir=data_dir, save_path=save_path,max_iters=50)
