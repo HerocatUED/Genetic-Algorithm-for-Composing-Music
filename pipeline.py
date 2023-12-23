@@ -10,7 +10,7 @@ from fitness_functions.melody import melody_score
 from fitness_functions.rhythm import rhythm_score
 from data.midi import read_mid
 from pathlib import Path
-from torch.utils.tensorboard.writer import SummaryWriter
+# from torch.utils.tensorboard.writer import SummaryWriter
 from tqdm import tqdm
 
 
@@ -44,7 +44,7 @@ def main(data_dir: Path, save_path: Path, max_iters: int):
 
     # iter loops
 
-    # for iter in tqdm(range(max_iters)):
+    # # for iter in tqdm(range(max_iters)):
 
     # writer = SummaryWriter(log_dir=os.path.join('experiments', args.exp_name, 'logs'))
     # calculate fitness
