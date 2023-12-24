@@ -47,10 +47,10 @@ def main(
 
     # init population
     initial_population = musics[random.sample(range(musics.shape[0]), 10)].copy()
-
-    writer = SummaryWriter(log_dir=Path("./result/logs"))
+    
+    writer = SummaryWriter(log_dir=Path("./result/logs"),comment="pipeline")
     # 设置最大留存旋律的数目阈值和最小适合度函数的阈值
-    max_melody_num = 100
+    max_melody_num = 50
     min_fitness = 130
     # iter loops
     for iter in tqdm(range(max_iters)):
@@ -58,8 +58,8 @@ def main(
         print(initial_population.shape)
         for i in range(initial_population.shape[0]):
             for j in range(i + 1, initial_population.shape[0]):
-                r1,r2 = cross_over(initial_population[i], initial_population[j])
-                cross_over_population.append(r1)                 
+                r1, r2 = cross_over(initial_population[i], initial_population[j])
+                cross_over_population.append(r1)
                 cross_over_population.append(r2)
         cross_over_population = np.array(cross_over_population)
         # mutation
@@ -70,6 +70,18 @@ def main(
         idx = fitness >= min_fitness
         cross_over_population = cross_over_population[idx]
         fitness = fitness[idx]
+        # 去重
+        nidx = []
+        for i in range(1, cross_over_population.shape[0]):
+            pd = 1
+            for j in range(i):
+                if np.array_equal(cross_over_population[i], cross_over_population[j]):
+                    pd = 0
+                    break
+            if(pd):
+                nidx.append(i)
+        cross_over_population = cross_over_population[nidx]
+        fitness = fitness[nidx]
         # sort and select
         idx = np.argsort(fitness)[::-1]
         cross_over_population = cross_over_population[idx]
@@ -80,13 +92,14 @@ def main(
         writer.add_scalar("fitness/fitness", fitness.mean(), iter)
     # save
     np.save(save_path / "final_population.npy", initial_population)
-
+    # calc chord
+    chord_losses = chord_score(initial_population, debug_mode=0)
     writer.close()
 
 
 if __name__ == "__main__":
     # 存放midi文件的路径
-    data_dir = Path("./data")
+    data_dir = Path("../mididata")
     save_path = Path("./result/")
     save_path.mkdir(parents=True, exist_ok=True)
 
