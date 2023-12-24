@@ -4,10 +4,11 @@ import numpy as np
 from definitions import *
 
 
-def read_mid(path: str):
+def read_mid(path: str, mode :int = 0):
     '''
     Args:
         path: path to load midi file
+        mode: 0 if original, 1 if we saved
     '''
     mid = mido.MidiFile(path)
     num = [] # e.g. [76, 74, 0, 74]
@@ -27,8 +28,11 @@ def read_mid(path: str):
             num += [0] * n
             pitch += ['0'] * n
     # pad the music to 18*8
-    num = np.array(num,dtype=int)
+    music = np.array(num,dtype=int)
     current_length = np.shape(num)[0]
-    music = np.pad(num, (0,padded_length-current_length), 'constant', constant_values=0)
-    return music[8:17*8] # cutout the first and last
+    print(current_length)
+    if mode == 0:
+        music = np.pad(music, (0, padded_length-current_length), 'constant', constant_values=0)
+        music[8:17*8] # cutout the first and last
+    else: return music
 
