@@ -56,9 +56,9 @@ def calc(
         if chord_type == 1:  # A : 0 , B : 1 # Fixed definitions.py by hzj
             nwans = chord_B
         if mxnum7 < rate7:
-            ans = ans * (1 - (rate7 - mxnum7) * rate7_penalty)
+            nwans = nwans * (1 - (rate7 - mxnum7) * rate7_penalty)
         if mnnum7 > rate7:
-            ans = ans * (1 - (mnnum7 - rate7) * rate7_penalty)
+            nwans = nwans * (1 - (mnnum7 - rate7) * rate7_penalty)
         if(nwans > ans):
             ans = nwans
             id = cnt
