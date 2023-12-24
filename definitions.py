@@ -45,6 +45,9 @@ num2pitch = {
     95: "B6",
 }
 
+min_pitch = 36
+max_pitch = 95
+
 chord_trans = np.array([1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 0])  # %12之后将12音级暂时转化为0~6，其中1为do,...,6为la,0为si
 reverse_trans = np.array([11, 0, 2, 4, 5, 7, 9])
 

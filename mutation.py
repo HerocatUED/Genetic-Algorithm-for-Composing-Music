@@ -26,7 +26,7 @@ def inversion(music):
 
 
 def shift(music):
-    d = random.randint(0, 6)
+    d = random.randint(0, 3)
     return music + d
 
 def mutate(music, mutation_rate):

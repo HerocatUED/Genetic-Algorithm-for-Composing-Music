@@ -32,6 +32,6 @@ def read_mid(path: str, mode :int = 0):
     current_length = np.shape(num)[0]
     if mode == 0:
         music = np.pad(music, (0, padded_length-current_length), 'constant', constant_values=0)
-        music[8:17*8] # cutout the first and last
+        return music[8:17*8] # cutout the first and last
     else: return music
 
