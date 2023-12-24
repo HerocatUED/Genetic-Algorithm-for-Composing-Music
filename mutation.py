@@ -18,7 +18,7 @@ def cross_over(music1, music2):
 
 def reflection(music):
     a0 = music[0]
-    return (2*a0 - music) % 7
+    return 2*a0 - music
 
 
 def inversion(music):
@@ -27,7 +27,7 @@ def inversion(music):
 
 def shift(music):
     d = random.randint(0, 6)
-    return (music + d) % 7
+    return music + d
 
 
 def mutate(music, mutation_rate):
@@ -38,6 +38,8 @@ def mutate(music, mutation_rate):
             r = music[i * 8 : (i + 1) * 8] % 12
             # 转换成0-6
             mutated = random.choice([reflection, inversion, shift])(chord_trans(r))
-            music[i * 8 : (i + 1) * 8] = m * 12 + reverse_trans(mutated)
+            m1 = mutated // 7
+            r1 = mutated % 7
+            music[i * 8 : (i + 1) * 8] = (m + m1) * 12 + reverse_trans(r1)
     return music
 
