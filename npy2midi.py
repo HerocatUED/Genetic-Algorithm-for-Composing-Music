@@ -42,4 +42,5 @@ def npy2midi(res_path: Path, data):
             else:  # Rest
                 time_since_last_note += time_step
     # Save the MIDI file
+    res_path.mkdir(parents=True,exist_ok=True)
     mid.save(res_path)

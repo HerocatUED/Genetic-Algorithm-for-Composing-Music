@@ -48,7 +48,7 @@ def main(
 
     # init population
     initial_population = musics[random.sample(range(musics.shape[0]), 10)].copy()
-
+    log_path = Path("./result/logs")
     writer = SummaryWriter(log_dir=Path("./result/logs"), comment="pipeline")
     # 设置最大留存旋律的数目阈值和最小适合度函数的阈值
     max_melody_num = 50
@@ -94,7 +94,9 @@ def main(
     # save
     np.save(save_path / "final_population.npy", initial_population)
     for id in range(initial_population.shape[0]):
-        npy2midi(res_path=save_path / f"{id}", npy_data=initial_population[id])
+        npy2midi(
+            res_path=save_path / "midis" / f"{id}.mid", data=initial_population[id]
+        )
     # calc chord
     # chord_losses = chord_score(initial_population, debug_mode=0)
     writer.close()
@@ -106,4 +108,4 @@ if __name__ == "__main__":
     save_path = Path("./result/")
     save_path.mkdir(parents=True, exist_ok=True)
 
-    main(data_dir=data_dir, save_path=save_path, max_iters=50)
+    main(data_dir=data_dir, save_path=save_path, max_iters=5)
