@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from definitions import *
 
 
 def cross_over(music1, music2):
@@ -16,7 +17,8 @@ def cross_over(music1, music2):
 
 
 def reflection(music):
-    return music
+    a0 = music[0]
+    return (2*a0 - music) % 7
 
 
 def inversion(music):
@@ -24,15 +26,18 @@ def inversion(music):
 
 
 def shift(music):
-    return music
+    d = random.randint(0, 6)
+    return (music + d) % 7
 
 
 def mutate(music, mutation_rate):
     # 对每一个小节，均存在一个变异的概率，如果变异，则对该小节随机使用倒影/逆行/移调变换
     for i in range(music.shape[0] // 8):
         if random.random() < mutation_rate:
-            music[i * 8 : (i + 1) * 8] = random.choice([reflection, inversion, shift])(
-                music[i * 8 : (i + 1) * 8]
-            )
+            m = music[i * 8 : (i + 1) * 8] // 12
+            r = music[i * 8 : (i + 1) * 8] % 12
+            # 转换成0-6
+            mutated = random.choice([reflection, inversion, shift])(chord_trans(r))
+            music[i * 8 : (i + 1) * 8] = m * 12 + reverse_trans(mutated)
     return music
 

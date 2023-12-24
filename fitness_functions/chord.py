@@ -5,8 +5,6 @@ import sys
 sys.path.append("..")
 from definitions import *
 
-chord_trans = [1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 0]  # 将12音级暂时转化为0~6，其中1为do,...,6为la,0为si
-
 def in5(a, b):  # 在五和弦里
     if a == b or a == (b + 2) % 7 or a == (b + 4) % 7:
         return True
