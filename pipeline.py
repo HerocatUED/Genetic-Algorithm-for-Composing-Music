@@ -93,8 +93,9 @@ def main(
     # save
     np.save(save_path / "final_population.npy", initial_population)
     for id in range(initial_population.shape[0]):
+        res_path = str(save_path / "midis" / f"{id}.mid")
         npy2midi(
-            res_path=str(save_path / "midis" / f"{id}.mid"), data=initial_population[id]
+            res_path=res_path, data=initial_population[id]
         )
     # calc chord
     # chord_losses = chord_score(initial_population, debug_mode=0)
@@ -103,7 +104,7 @@ def main(
 
 if __name__ == "__main__":
     # 存放midi文件的路径
-    data_dir = Path("./data/new/")
+    data_dir = Path("./data/")
     save_path = Path("./result/")
     save_path.mkdir(parents=True, exist_ok=True)
 
