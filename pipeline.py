@@ -11,6 +11,7 @@ from torch.utils.tensorboard.writer import SummaryWriter
 from midi import read_mid
 from fitness_functions import *
 from mutation import *
+from npy2midi import npy2midi
 
 
 def main(
@@ -19,7 +20,7 @@ def main(
     max_iters: int = 50,
     max_melody_num: int = 100,
     min_fitness: float = 130,
-    mutation_rate: float = 0.01,
+    mutation_rate: float = 0.05,
     mode=1,
 ):
     # read midis
@@ -47,8 +48,8 @@ def main(
 
     # init population
     initial_population = musics[random.sample(range(musics.shape[0]), 10)].copy()
-    
-    writer = SummaryWriter(log_dir=Path("./result/logs"),comment="pipeline")
+
+    writer = SummaryWriter(log_dir=Path("./result/logs"), comment="pipeline")
     # 设置最大留存旋律的数目阈值和最小适合度函数的阈值
     max_melody_num = 50
     min_fitness = 130
@@ -78,7 +79,7 @@ def main(
                 if np.array_equal(cross_over_population[i], cross_over_population[j]):
                     pd = 0
                     break
-            if(pd):
+            if pd:
                 nidx.append(i)
         cross_over_population = cross_over_population[nidx]
         fitness = fitness[nidx]
@@ -92,8 +93,10 @@ def main(
         writer.add_scalar("fitness/fitness", fitness.mean(), iter)
     # save
     np.save(save_path / "final_population.npy", initial_population)
+    for id in range(initial_population.shape[0]):
+        npy2midi(res_path=save_path / f"{id}", npy_data=initial_population[id])
     # calc chord
-    chord_losses = chord_score(initial_population, debug_mode=0)
+    # chord_losses = chord_score(initial_population, debug_mode=0)
     writer.close()
 
 
