@@ -18,7 +18,7 @@ def continuous_fast(music:np.array, threshold:int):
     for row in mask:
         labeled_array, _ = label(row)
         row_counts = np.bincount(labeled_array)[1:] # remove 0
-        counts.append((row_counts >= threshold).sum())
+        counts.append((row_counts > threshold).sum())
     counts = np.array(counts)
     # score with repeatness
     score = np.ones(np.shape(music)[0]) * 100
@@ -38,7 +38,7 @@ def rest(music:np.array, threshold: float):
     for row in mask:
         labeled_array, _ = label(row)
         row_counts = np.bincount(labeled_array)[1:] # remove 0
-        counts.append((row_counts >= threshold).sum())
+        counts.append((row_counts > threshold).sum())
     counts = np.array(counts)
     # score with rest
     score = np.ones(np.shape(music)[0]) * 100

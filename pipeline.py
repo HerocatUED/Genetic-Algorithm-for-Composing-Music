@@ -13,8 +13,6 @@ from fitness_functions.melody import melody_score
 from fitness_functions.rhythm import rhythm_score
 from data.midi import read_mid
 
-
-# from torch.utils.tensorboard.writer import SummaryWriter
 from tqdm import tqdm
 
 
