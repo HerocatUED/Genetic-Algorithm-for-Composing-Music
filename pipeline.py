@@ -106,9 +106,7 @@ def main(
     writer.close()
 
 def test(id = 0):
-    # result = np.load('./result/final_population.npy')
-    # npy2midi(result[-8], './result/outputmusic3.mid')
-    musics = read_mid(f'./result/midis/{id}.mid', 1)
+    musics = np.load('result/final_population.npy')[id]
     musics = np.expand_dims(musics, axis=0)
     print("Calculating fitness...")
     fitness = fitness_function(musics)
