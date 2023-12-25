@@ -32,26 +32,3 @@ def npy2midi(data, res_path):
             time_since_last_note += time_step
     # Save the MIDI file
     mid.save(res_path)
-
-
-def test():
-    result = np.load('./result/final_population.npy')
-    npy2midi(result[-8], './result/outputmusic3.mid')
-    musics = read_mid('./result/outputmusic3.mid', 1)
-    musics = np.expand_dims(musics, axis=0)
-    print("Calculating fitness...")
-    fitness = fitness_function(musics)
-    chord_losses = chord_score(musics, debug_mode=1)
-    melody_losses = melody_score(musics)
-    rhythm_losses = rhythm_score(musics)
-    results = zip(fitness, chord_losses, melody_losses, rhythm_losses)
-    results = sorted(results, key=lambda x: x[1], reverse=True)
-    for fit, chord_loss, melody_loss, rhythm_loss in results:
-        print(
-            f"[fit: {fit:7.3f}], [chord: {chord_loss:7.3f}], [melody: {melody_loss:7.3f}], [rhythm: {rhythm_loss:7.3f}]"
-        )
-    return
-    
-
-if __name__ == '__main__':
-    test()

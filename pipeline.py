@@ -3,6 +3,9 @@ import sys
 import os
 import random
 
+import os
+import argparse
+
 import numpy as np
 from tqdm import tqdm
 from pathlib import Path
@@ -12,6 +15,7 @@ from midi import read_mid
 from fitness_functions import *
 from mutation import *
 from npy2midi import npy2midi
+
 
 
 def main(
@@ -101,11 +105,35 @@ def main(
     # chord_losses = chord_score(initial_population, debug_mode=0)
     writer.close()
 
+def test(id = 0):
+    # result = np.load('./result/final_population.npy')
+    # npy2midi(result[-8], './result/outputmusic3.mid')
+    musics = read_mid(f'./result/midis/{id}.mid', 1)
+    musics = np.expand_dims(musics, axis=0)
+    print("Calculating fitness...")
+    fitness = fitness_function(musics)
+    chord_losses = chord_score(musics, debug_mode=1)
+    melody_losses = melody_score(musics)
+    rhythm_losses = rhythm_score(musics)
+    results = zip(fitness, chord_losses, melody_losses, rhythm_losses)
+    results = sorted(results, key=lambda x: x[1], reverse=True)
+    for fit, chord_loss, melody_loss, rhythm_loss in results:
+        print(
+            f"[fit: {fit:7.3f}], [chord: {chord_loss:7.3f}], [melody: {melody_loss:7.3f}], [rhythm: {rhythm_loss:7.3f}]"
+        )
+    return
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
     # 存放midi文件的路径
+    parser.add_argument('--mode', type=str, required=False, default='train')
+    parser.add_argument('--id', type=int, required=False, default=0)
+    args = parser.parse_args()
+    
     data_dir = Path("./data/")
     save_path = Path("./result/")
     save_path.mkdir(parents=True, exist_ok=True)
 
-    main(data_dir=data_dir, save_path=save_path, max_iters=10)
+    if args.mode == 'train':
+        main(data_dir=data_dir, save_path=save_path, max_iters=20)
+    else: test(id=args.id)

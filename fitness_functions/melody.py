@@ -88,6 +88,9 @@ def melody_score(
     nonzero_cnt = np.count_nonzero(music_1, axis=1)
 
     score = repeatness(music_1, threshold_r)*weight_r + fluctuation(music_2, nonzero_cnt, threshold_f, threshold_m)*weight_f
+    out_of_range_mask = (music_2 < min_pitch) | (music_2 > max_pitch)
+    out_of_range_mask = np.any(out_of_range_mask, axis=1)
+    score[out_of_range_mask] = 0
     return score
     
     
