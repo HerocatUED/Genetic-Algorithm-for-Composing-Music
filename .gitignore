@@ -1,5 +1,6 @@
 **/__pycache__
 .DS_Store
 data/old
+data/new
 result/logs/
 result/midis/
